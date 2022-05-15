@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+    <style>
+        * {
+            margin:0px;
+            padding:0px;
+        }
+        .main-block 
+        {
+            padding:50px;
+            background-color: white;
+            margin:100px;
+            border-radius:20px;
+            box-shadow:0 0 10px 10px black;
+            
+        }
+        body {
+            background-image: url("https://bipbap.ru/wp-content/uploads/2017/12/555_zakat-640x360.jpg");
+            background-repeat:no-repeat;
+            background-size:cover;
+        }
+        h2 {
+            font-size:36px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="main-block">
+        <h1>Переводчик</h1>
+        <textarea placeholder="Введите слово для перевода"  name="" id="textarea" cols="50" rows="10"></textarea>
+        <button class="btn" id="btn">Перевести слово</button>
+        <div class="block"></div>
+    </div>
+    <script>
+        // Обьявляем элементы для доступа к полям, кнопке и блоку в который мы будем ложить текст
+        
+        
+        
+            const textarea = document.querySelector("#textarea");
+            const btn = document.querySelector(".btn");
+            const block = document.querySelector(".block");
+            const input = document.querySelector("#input");
+        
+        
+        // const app_id = "edc943a9";
+        // const app_key = "141295d4a51fa621297dc26a213d0554";
+         const key = "dict.1.1.20220515T102921Z.6889fa713364642e.8f98fae0174dade975f6c42bbaee2834f0f0a0e2";
+
+       
+                // При fetch запросе переводим слово, ищем предложения с этим словом и синонимы!
+
+            function searchAndTranslate()
+            {
+                btn.addEventListener("click",()=> {
+                    var url = `https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=${key}&lang=en-ru&text=${textarea.value}`;
+                    console.log(textarea.value);
+                    
+                    fetch(url).then((response)=> {
+                    return response.json();
+                }).then((data)=> {
+                    var translated = data.def[0].tr[0].text;
+                    var examples = data.def[0].tr[0].ex[0].text;
+                    var examplesTranslate =  data.def[0].tr[0].ex[0].tr[0].text;
+                    var synonyms = data.def[0].tr[0].syn[0];
+
+                    function kruto() 
+                        {   
+                            
+                            if(synonyms)
+                            {
+                                return synonyms.text;
+                            }
+                        }
+                
+                    block.innerHTML = `<h2>${textarea.value} == ${translated}
+                        </h2>
+                        <h2>Примеры использования слова: <h3>${examples} - ${examplesTranslate}</h3></h2>
+                        <h3>Синонимы слова:${kruto()}</h3>
+
+                    
+                    
+                    `;
+                    console.log(data.def[0]);
+                    
+                })
+                
+            })
+        }
+
+        searchAndTranslate();
+        
+            
+        
+    </script>
+</body>
+</html>
